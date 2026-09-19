@@ -1,61 +1,40 @@
 const fs = require("fs");
 const path = require("path");
+const express = require("express");
+const axios = require("axios");
 
-// Lire le cookie depuis compte.txt
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Lire le cookie
 const cookiePath = path.join(__dirname, "compte.txt");
-const COOKIE = fs.existsSync(cookiePath) 
-  ? fs.readFileSync(cookiePath, "utf8").trim() 
-  : "";
+let COOKIE = "";
+
+if (fs.existsSync(cookiePath)) {
+  COOKIE = fs.readFileSync(cookiePath, "utf8").trim();
+}
 
 if (!COOKIE) {
   console.log("❌ Mets ton cookie dans compte.txt d'abord !");
   process.exit(1);
 }
 
-const { login } = require("./utils/login");
-const handleMessage = require("./handles/message");
+console.log("✅ Cookie lu avec succès !");
 
-global.GoatBot = {
-  commands: new Map(),
-  aliases: new Map(),
-  config: {
-    prefix: "", // Pas de préfixe → répond tout de suite
-    adminUID: "", // Ton ID Facebook
-    autoRead: true,
-    typingIndicator: true
-  }
-};
+// Page de test
+app.get("/", (req, res) => {
+  res.send("🤖 Angela est en ligne — créée par Ariel Aks Otaku ✨");
+});
 
-async function startBot() {
+// Garder le bot éveillé
+setInterval(async () => {
   try {
-    console.log("🔁 Connexion en cours...");
-    
-    const api = await login({ cookie: COOKIE });
-    
-    console.log("✅ Angela connectée ! — Ariel Aks Otaku 💙");
+    await axios.get(`http://localhost:${PORT}`);
+    console.log("✅ Angela reste éveillée...");
+  } catch (e) {}
+}, 300000); // 5 minutes
 
-    // Écouter les messages
-    api.listenMention(async (err, event) => {
-      if (err) return console.error("Erreur :", err);
-      
-      // Répond en privé ET dans groupe
-      await handleMessage({ api, event });
-    });
-
-    // Aussi les messages privés directs
-    api.listen(async (err, event) => {
-      if (err) return;
-      if (event.type === "message") {
-        await handleMessage({ api, event });
-      }
-    });
-
-  } catch (err) {
-    console.log("❌ Erreur connexion :", err.message);
-    console.log("🔄 Réessai dans 10s...");
-    setTimeout(startBot, 10000);
-  }
-}
-
-startBot();
-    
+app.listen(PORT, () => {
+  console.log(`✅ Serveur Angela démarré sur le port ${PORT}`);
+  console.log("✨ Prête à répondre — Ariel Aks Otaku");
+});
