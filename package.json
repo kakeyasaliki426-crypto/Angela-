@@ -1,0 +1,21 @@
+{
+  "name": "angela-goat-bot",
+  "version": "1.0.0",
+  "description": "Angela — IA créée par Ariel Aks Otaku",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "axios": "^1.7.0",
+    "express": "^4.19.2",
+    "fs-extra": "^11.2.0",
+    "node-fetch": "^2.7.0",
+    "facebook-chat-api": "^1.8.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "author": "Ariel Aks Otaku",
+  "license": "MIT"
+}
